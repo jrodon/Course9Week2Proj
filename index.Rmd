@@ -1,0 +1,31 @@
+---
+title: "Volcanos in Argentina"
+author: "Javier A. Rodón"
+date: "12/12/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, fig.align='center', message=FALSE}
+library(leaflet)
+library(plotKML)
+
+download.file("http://tripgang.com/kml2gpx/http%3A%2F%2Ftools.wmflabs.org%2Fkmlexport%3Farticle%3DList_of_volcanoes_in_Argentina?gpx=1", "arg_volcanos.gpx")
+
+volc.Coords <- readGPX("arg_volcanos.gpx")
+volc.Coords <- data.frame(volc.Coords$waypoints)
+
+volc.Icon <- makeIcon("icons8-volcano-50.png", iconHeight = 31, iconWidth = 31,
+                      iconAnchorX = 16, iconAnchorY = 16)
+
+volc.Map <- volc.Coords %>% 
+      leaflet() %>% 
+      addTiles() %>% 
+      addMarkers(label = volc.Coords$name, popup = volc.Coords$name,
+                 clusterOptions = markerClusterOptions(),
+                 icon = volc.Icon)
+volc.Map
+```
